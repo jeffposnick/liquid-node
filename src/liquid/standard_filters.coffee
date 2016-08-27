@@ -1,5 +1,5 @@
 strftime = require "strftime"
-Promise = require "native-or-bluebird"
+
 Iterable = require "./iterable"
 { flatten } = require "./helpers"
 

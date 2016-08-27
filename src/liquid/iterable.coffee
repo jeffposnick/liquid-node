@@ -1,5 +1,5 @@
 Range = require "./range"
-Promise = require "native-or-bluebird"
+
 
 isString = (input) ->
   Object::toString.call(input) is "[object String]"

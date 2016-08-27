@@ -1,5 +1,5 @@
 Liquid = require "../../liquid"
-Promise = require "native-or-bluebird"
+
 
 module.exports = class Raw extends Liquid.Block
   parse: (tokens) ->

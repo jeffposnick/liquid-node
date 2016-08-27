@@ -1,5 +1,5 @@
 Liquid = requireLiquid()
-Promise = require "native-or-bluebird"
+
 
 describe "Liquid.Condition", ->
 

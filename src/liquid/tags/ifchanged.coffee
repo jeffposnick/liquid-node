@@ -1,5 +1,5 @@
 Liquid = require "../../liquid"
-Promise = require "native-or-bluebird"
+
 
 module.exports = class IfChanged extends Liquid.Block
   render: (context) ->
