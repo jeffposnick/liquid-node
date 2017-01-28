@@ -36,18 +36,18 @@
     "node": ">= 4.0.0"
   },
   "dependencies": {
-    "strftime": "~0.9.2"
+    "strftime": "~0.10.0"
   },
   "devDependencies": {
     "chai": "~3.5.0",
-    "chai-as-promised": "~5.3.0",
-    "coffee-script": "~1.10.0",
-    "coffeelint": "^1.11.1",
-    "coveralls": "^2.11.4",
+    "chai-as-promised": "~6.0.0",
+    "coffee-script": "~1.12.3",
+    "coffeelint": "^1.16.0",
+    "coveralls": "^2.11.15",
     "jscoverage": "^0.6.0",
-    "mocha": "~2.5.3",
+    "mocha": "~3.2.0",
     "mocha-lcov-reporter": "1.2.0",
-    "sinon": "^1.16.1",
+    "sinon": "^1.17.7",
     "sinon-chai": "^2.8.0"
   },
   "scripts": {
