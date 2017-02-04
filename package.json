@@ -12,16 +12,20 @@
     },
     {
       "name": "Chen Yicai"
+    },
+    {
+      "name": "Jeff Posnick",
+      "email": "jeffy@google.com"
     }
   ],
   "description": "Node.js port of Tobias Lütke's Liquid template engine.",
-  "version": "2.6.1",
+  "version": "3.0.0",
   "license": "MIT",
-  "homepage": "https://github.com/sirlantis/liquid-node",
-  "bugs": "https://github.com/sirlantis/liquid-node/issues",
+  "homepage": "https://github.com/jeffposnick/liquid-node",
+  "bugs": "https://github.com/jeffposnick/liquid-node/issues",
   "repository": {
     "type": "git",
-    "url": "git://github.com/sirlantis/liquid-node.git"
+    "url": "git://github.com/jeffposnick/liquid-node.git"
   },
   "keywords": [
     "liquid",
