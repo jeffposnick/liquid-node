@@ -2,7 +2,9 @@ export default class Range {
   constructor(start, end, step) {
     this.start = start;
     this.end = end;
-    if (step == null) { step = 0; }
+    if (step == null) {
+      step = 0;
+    }
     this.step = step;
     if (this.step === 0) {
       if (this.end < this.start) {
@@ -22,12 +24,16 @@ export default class Range {
 
     if (step > 0) {
       while (current < end) {
-        if (f(current)) { return true; }
+        if (f(current)) {
+          return true;
+        }
         current += step;
       }
     } else {
       while (current > end) {
-        if (f(current)) { return true; }
+        if (f(current)) {
+          return true;
+        }
         current += step;
       }
     }
@@ -47,11 +53,10 @@ export default class Range {
     this.forEach(e => array.push(e));
     return array;
   }
-};
+}
 
-Object.defineProperty(Range.prototype, "length", {
+Object.defineProperty(Range.prototype, 'length', {
   get() {
     return Math.floor((this.end - this.start) / this.step);
   }
-}
-);
+});

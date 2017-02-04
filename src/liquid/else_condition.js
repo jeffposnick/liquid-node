@@ -1,5 +1,7 @@
-import Liquid from "../liquid";
+import Liquid from '../liquid';
 
 export default class ElseCondition extends Liquid.Condition {
-  evaluate() { return true; }
-};
+  evaluate() {
+    return true;
+  }
+}

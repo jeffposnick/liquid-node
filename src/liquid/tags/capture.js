@@ -1,5 +1,5 @@
 let Syntax;
-import Liquid from "../../liquid";
+import Liquid from '../../liquid';
 
 // Capture stores the result of a block into a variable without rendering it inplace.
 //
@@ -12,7 +12,7 @@ import Liquid from "../../liquid";
 // Capture is useful for saving content for use later in your template, such as
 // in a sidebar or footer.
 //
-export default Syntax = undefined;
+export default (Syntax = undefined);
 let SyntaxHelp = undefined;
 class Capture extends Liquid.Block {
   static initClass() {
@@ -31,15 +31,12 @@ class Capture extends Liquid.Block {
     }
   }
 
-
-
   render(context) {
     return super.render(...arguments).then(chunks => {
       let output = Liquid.Helpers.toFlatString(chunks);
       context.lastScope()[this.to] = output;
-      return "";
-    }
-    );
+      return '';
+    });
   }
 }
 Capture.initClass();

@@ -25,7 +25,6 @@
 // catch all
 export default class Drop {
   static initClass() {
-  
     this.prototype.context = null;
   }
 
@@ -37,7 +36,7 @@ export default class Drop {
     if (this.constructor.isInvokable(methodOrKey)) {
       let value = this[methodOrKey];
 
-      if (typeof value === "function") {
+      if (typeof value === 'function') {
         return value.call(this);
       } else {
         return value;
@@ -47,19 +46,24 @@ export default class Drop {
     }
   }
 
-  beforeMethod(method) {}
+  beforeMethod(method) {
+  }
 
   static isInvokable(method) {
-    if (this.invokableMethods == null) { this.invokableMethods = (() => {
-      let blacklist = Object.keys(Drop.prototype);
-      let whitelist = ["toLiquid"];
+    if (this.invokableMethods == null) {
+      this.invokableMethods = (() => {
+        let blacklist = Object.keys(Drop.prototype);
+        let whitelist = ['toLiquid'];
 
-      Object.keys(this.prototype).forEach(function(k) {
-        if (blacklist.indexOf(k) < 0) { return whitelist.push(k); }
-      });
+        Object.keys(this.prototype).forEach(function(k) {
+          if (blacklist.indexOf(k) < 0) {
+            return whitelist.push(k);
+          }
+        });
 
-      return whitelist;
-    })(); }
+        return whitelist;
+      })();
+    }
 
     return this.invokableMethods.indexOf(method) >= 0;
   }
@@ -75,5 +79,5 @@ export default class Drop {
   toString() {
     return `[Liquid.Drop ${this.constructor.name}]`;
   }
-};
+}
 Drop.initClass();

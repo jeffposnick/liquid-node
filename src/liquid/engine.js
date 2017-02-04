@@ -1,7 +1,6 @@
-import Liquid from "../liquid";
+import Liquid from '../liquid';
 
-export default Liquid.Engine = class Engine {
-
+export default (Liquid.Engine = class Engine {
   constructor() {
     this.tags = {};
     this.Strainer = function(context) {
@@ -9,7 +8,7 @@ export default Liquid.Engine = class Engine {
     };
     this.registerFilters(Liquid.StandardFilters);
 
-    this.fileSystem = new Liquid.BlankFileSystem;
+    this.fileSystem = new Liquid.BlankFileSystem();
 
     var isSubclassOf = function(klass, ofKlass) {
       if (typeof klass !== 'function') {
@@ -17,16 +16,25 @@ export default Liquid.Engine = class Engine {
       } else if (klass === ofKlass) {
         return true;
       } else {
-        return isSubclassOf(__guard__(klass.__super__, x => x.constructor), ofKlass);
+        return isSubclassOf(
+          __guard__(klass.__super__, x => x.constructor),
+          ofKlass
+        );
       }
     };
 
     for (let tagName of Object.keys(Liquid || {})) {
       let tag = Liquid[tagName];
-      if (!isSubclassOf(tag, Liquid.Tag)) { continue; }
-      let isBlockOrTagBaseClass = [Liquid.Tag,
-                               Liquid.Block].indexOf(tag.constructor) >= 0;
-      if (!isBlockOrTagBaseClass) { this.registerTag(tagName.toLowerCase(), tag); }
+      if (!isSubclassOf(tag, Liquid.Tag)) {
+        continue;
+      }
+      let isBlockOrTagBaseClass = [Liquid.Tag, Liquid.Block].indexOf(
+        tag.constructor
+      ) >=
+        0;
+      if (!isBlockOrTagBaseClass) {
+        this.registerTag(tagName.toLowerCase(), tag);
+      }
     }
   }
 
@@ -41,17 +49,18 @@ export default Liquid.Engine = class Engine {
         for (let k of Object.keys(filter || {})) {
           let v = filter[k];
           let item;
-          if (v instanceof Function) { item = this.Strainer.prototype[k] = v; }
+          if (v instanceof Function) {
+            item = this.Strainer.prototype[k] = v;
+          }
           result.push(item);
         }
         return result;
       })();
-    }
-    );
+    });
   }
 
   parse(source) {
-    let template = new Liquid.Template;
+    let template = new Liquid.Template();
     return template.parse(this, source);
   }
 
@@ -60,11 +69,15 @@ export default Liquid.Engine = class Engine {
   }
 
   registerFileSystem(fileSystem) {
-    if (!(fileSystem instanceof Liquid.BlankFileSystem)) { throw Liquid.ArgumentError("Must be subclass of Liquid.BlankFileSystem"); }
+    if (!(fileSystem instanceof Liquid.BlankFileSystem)) {
+      throw Liquid.ArgumentError('Must be subclass of Liquid.BlankFileSystem');
+    }
     return this.fileSystem = fileSystem;
   }
-};
+});
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+  return typeof value !== 'undefined' && value !== null
+    ? transform(value)
+    : undefined;
 }

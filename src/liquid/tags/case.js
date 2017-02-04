@@ -1,24 +1,26 @@
 let SyntaxHelp;
-import Liquid from "../../liquid";
+import Liquid from '../../liquid';
 
-import PromiseReduce from "../../promise_reduce";
+import PromiseReduce from '../../promise_reduce';
 
-export default SyntaxHelp = undefined;
+export default (SyntaxHelp = undefined);
 let Syntax = undefined;
 let WhenSyntax = undefined;
 class Case extends Liquid.Block {
   static initClass() {
     SyntaxHelp = "Syntax Error in tag 'case' - Valid syntax: case [expression]";
-  
-    Syntax     = new RegExp(`(${Liquid.QuotedFragment.source})`);
-  
-    WhenSyntax = new RegExp(`\
+
+    Syntax = new RegExp(`(${Liquid.QuotedFragment.source})`);
+
+    WhenSyntax = new RegExp(
+      `\
 (${Liquid.QuotedFragment.source})\
 (?:\
 (?:\\s+or\\s+|\\s*\\,\\s*)\
 (${Liquid.QuotedFragment.source})\
 )?\
-`);
+`
+    );
   }
 
   constructor(template, tagName, markup) {
@@ -26,14 +28,15 @@ class Case extends Liquid.Block {
     this.blocks = [];
 
     let match = Syntax.exec(markup);
-    if (!match) { throw new Liquid.SyntaxError(SyntaxHelp); }
+    if (!match) {
+      throw new Liquid.SyntaxError(SyntaxHelp);
+    }
 
     this.markup = markup;
   }
 
-
   unknownTag(tag, markup) {
-    if (["when", "else"].includes(tag)) {
+    if (['when', 'else'].includes(tag)) {
       return this.pushBlock(tag, markup);
     } else {
       return super.unknownTag(...arguments);
@@ -42,32 +45,37 @@ class Case extends Liquid.Block {
 
   render(context) {
     return context.stack(() => {
-      return PromiseReduce(this.blocks, function(chosenBlock, block) {
-        if (chosenBlock != null) { return chosenBlock; } // short-circuit
-
-        return Promise.resolve()
-          .then(() => block.evaluate(context)).then(function(ok) {
-            if (ok) { return block; }
-        });
-      }
-      , null)
-      .then(block => {
+      return PromiseReduce(
+        this.blocks,
+        function(chosenBlock, block) {
+          if (chosenBlock != null) {
+            return chosenBlock;
+          } // short-circuit
+          return Promise
+            .resolve()
+            .then(() => block.evaluate(context))
+            .then(function(ok) {
+              if (ok) {
+                return block;
+              }
+            });
+        },
+        null
+      ).then(block => {
         if (block != null) {
           return this.renderAll(block.attachment, context);
         } else {
-          return "";
+          return '';
         }
-      }
-      );
-    }
-    );
+      });
+    });
   }
 
   // private
 
   pushBlock(tag, markup) {
     let block;
-    if (tag === "else") {
+    if (tag === 'else') {
       block = new Liquid.ElseCondition();
       this.blocks.push(block);
       return this.nodelist = block.attach([]);

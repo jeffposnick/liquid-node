@@ -1,32 +1,41 @@
-import Liquid from "../liquid";
-
+import Liquid from '../liquid';
 
 export default class Context {
   static initClass() {
-  
     // PRIVATE API
-  
+
     this.Literals = {
-      'null': null,
-      'nil': null,
+      null: null,
+      nil: null,
       '': null,
-      'true': true,
-      'false': false
+      true: true,
+      false: false
     };
   }
 
   constructor(engine, environments, outerScope, registers, rethrowErrors) {
     let left;
-    if (environments == null) { environments = {}; }
-    if (outerScope == null) { outerScope = {}; }
-    if (registers == null) { registers = {}; }
-    if (rethrowErrors == null) { rethrowErrors = false; }
+    if (environments == null) {
+      environments = {};
+    }
+    if (outerScope == null) {
+      outerScope = {};
+    }
+    if (registers == null) {
+      registers = {};
+    }
+    if (rethrowErrors == null) {
+      rethrowErrors = false;
+    }
     this.environments = Liquid.Helpers.flatten([environments]);
     this.scopes = [outerScope];
     this.registers = registers;
     this.errors = [];
     this.rethrowErrors = rethrowErrors;
-    this.strainer = (left = __guard__(engine, x => new x.Strainer(this))) != null ? left : {};
+    this.strainer = (left = __guard__(engine, x => new x.Strainer(this))) !=
+      null
+      ? left
+      : {};
     this.squashInstanceAssignsWithEnvironments();
   }
 
@@ -39,15 +48,18 @@ export default class Context {
     for (let filter of Array.from(filters)) {
       for (let k of Object.keys(filter || {})) {
         let v = filter[k];
-        if (v instanceof Function) { this.strainer[k] = v; }
+        if (v instanceof Function) {
+          this.strainer[k] = v;
+        }
       }
     }
-
   }
 
   handleError(e) {
     this.errors.push(e);
-    if (this.rethrowErrors) { throw e; }
+    if (this.rethrowErrors) {
+      throw e;
+    }
 
     if (e instanceof Liquid.SyntaxError) {
       return `Liquid syntax error: ${e.message}`;
@@ -63,18 +75,26 @@ export default class Context {
       return method.apply(this.strainer, args);
     } else {
       let available = Object.keys(this.strainer);
-      throw new Liquid.FilterNotFound(`Unknown filter \`${methodName}\`, available: [${available.join(', ')}]`);
+      throw new Liquid.FilterNotFound(
+        `Unknown filter \`${methodName}\`, available: [${available.join(', ')}]`
+      );
     }
   }
 
   push(newScope) {
-    if (newScope == null) { newScope = {}; }
+    if (newScope == null) {
+      newScope = {};
+    }
     this.scopes.unshift(newScope);
-    if (this.scopes.length > 100) { throw new Error("Nesting too deep"); }
+    if (this.scopes.length > 100) {
+      throw new Error('Nesting too deep');
+    }
   }
 
   merge(newScope) {
-    if (newScope == null) { newScope = {}; }
+    if (newScope == null) {
+      newScope = {};
+    }
     return (() => {
       let result = [];
       for (let k of Object.keys(newScope || {})) {
@@ -86,7 +106,9 @@ export default class Context {
   }
 
   pop() {
-    if (this.scopes.length <= 1) { throw new Error("ContextError"); }
+    if (this.scopes.length <= 1) {
+      throw new Error('ContextError');
+    }
     return this.scopes.shift();
   }
 
@@ -103,7 +125,9 @@ export default class Context {
   //
   //   context['var]  #=> nil
   stack(newScope, f) {
-    if (newScope == null) { newScope = {}; }
+    if (newScope == null) {
+      newScope = {};
+    }
     let popLater = false;
 
     try {
@@ -122,7 +146,9 @@ export default class Context {
 
       return result;
     } finally {
-      if (!popLater) { this.pop(); }
+      if (!popLater) {
+        this.pop();
+      }
     }
   }
 
@@ -157,13 +183,21 @@ export default class Context {
     let match;
     if (Liquid.Context.Literals.hasOwnProperty(key)) {
       return Liquid.Context.Literals[key];
-    } else if (match = /^'(.*)'$/.exec(key)) { // Single quoted strings
+    } else if (
+      match = /^'(.*)'$/.exec(key) // Single quoted strings
+    ) {
       return match[1];
-    } else if (match = /^"(.*)"$/.exec(key)) { // Double quoted strings
+    } else if (
+      match = /^"(.*)"$/.exec(key) // Double quoted strings
+    ) {
       return match[1];
-    } else if (match = /^(\d+)$/.exec(key)) { // Integer and floats
+    } else if (
+      match = /^(\d+)$/.exec(key) // Integer and floats
+    ) {
       return Number(match[1]);
-    } else if (match = /^\((\S+)\.\.(\S+)\)$/.exec(key)) { // Ranges
+    } else if (
+      match = /^\((\S+)\.\.(\S+)\)$/.exec(key) // Ranges
+    ) {
       let lo = this.resolve(match[1]);
       let hi = this.resolve(match[2]);
 
@@ -171,11 +205,14 @@ export default class Context {
         [lo, hi] = Array.from(args[0]);
         lo = Number(lo);
         hi = Number(hi);
-        if (isNaN(lo) || isNaN(hi)) { return []; }
+        if (isNaN(lo) || isNaN(hi)) {
+          return [];
+        }
         return new Liquid.Range(lo, hi + 1);
       });
-
-    } else if (match = /^(\d[\d\.]+)$/.exec(key)) { // Floats
+    } else if (
+      match = /^(\d[\d\.]+)$/.exec(key) // Floats
+    ) {
       return Number(match[1]);
     } else {
       return this.variable(key);
@@ -196,9 +233,10 @@ export default class Context {
     if (variableScope == null) {
       this.environments.some(env => {
         variable = this.lookupAndEvaluate(env, key);
-        if (variable != null) { return variableScope = env; }
-      }
-      );
+        if (variable != null) {
+          return variableScope = env;
+        }
+      });
     }
 
     if (variableScope == null) {
@@ -207,11 +245,13 @@ export default class Context {
       } else if (this.scopes.length > 0) {
         variableScope = this.scopes[this.scopes.length - 1];
       } else {
-        throw new Error("No scopes to find variable in.");
+        throw new Error('No scopes to find variable in.');
       }
     }
 
-    if (variable == null) { variable = this.lookupAndEvaluate(variableScope, key); }
+    if (variable == null) {
+      variable = this.lookupAndEvaluate(variableScope, key);
+    }
 
     return Promise.resolve(variable).then(v => this.liquify(v));
   }
@@ -229,58 +269,73 @@ export default class Context {
       }
 
       let object = this.findVariable(firstPart);
-      if (parts.length === 0) { return object; }
+      if (parts.length === 0) {
+        return object;
+      }
 
       let mapper = (part, object) => {
-        if (object == null) { return Promise.resolve(object); }
-
-        return Promise.resolve(object).then(this.liquify.bind(this)).then(object => {
-          if (object == null) { return object; }
-
-          let bracketMatch = squareBracketed.exec(part);
-          if (bracketMatch) { part = this.resolve(bracketMatch[1]); }
-
-          return Promise.resolve(part).then(part => {
-            let isArrayAccess = (Array.isArray(object) && isFinite(part));
-            let isObjectAccess = (object instanceof Object && (__guardMethod__(object, 'hasKey', o => o.hasKey(part)) || part in object));
-            let isSpecialAccess = (
-              !bracketMatch && object &&
-              (Array.isArray(object) || (Object.prototype.toString.call(object) === "[object String]")) &&
-              (["size", "first", "last"].indexOf(part) >= 0)
-            );
-
-            if (isArrayAccess || isObjectAccess) {
-              // If object is a hash- or array-like object we look for the
-              // presence of the key and if its available we return it
-              return Promise.resolve(this.lookupAndEvaluate(object, part)).then(this.liquify.bind(this));
-            } else if (isSpecialAccess) {
-              // Some special cases. If the part wasn't in square brackets
-              // and no key with the same name was found we interpret
-              // following calls as commands and call them on the
-              // current object
-              switch (part) {
-                case "size":
-                  return this.liquify(object.length);
-                case "first":
-                  return this.liquify(object[0]);
-                case "last":
-                  return this.liquify(object[object.length - 1]);
-                default:
-                  /* @covignore */
-                  throw new Error(`Unknown special accessor: ${part}`);
-              }
-            }
-          }
-          );
+        if (object == null) {
+          return Promise.resolve(object);
         }
-        );
+
+        return Promise
+          .resolve(object)
+          .then(this.liquify.bind(this))
+          .then(object => {
+            if (object == null) {
+              return object;
+            }
+
+            let bracketMatch = squareBracketed.exec(part);
+            if (bracketMatch) {
+              part = this.resolve(bracketMatch[1]);
+            }
+
+            return Promise.resolve(part).then(part => {
+              let isArrayAccess = Array.isArray(object) && isFinite(part);
+              let isObjectAccess = object instanceof Object &&
+                (__guardMethod__(object, 'hasKey', o => o.hasKey(part)) ||
+                  part in object);
+              let isSpecialAccess = !bracketMatch &&
+                object &&
+                (Array.isArray(object) ||
+                  Object.prototype.toString.call(object) ===
+                    '[object String]') &&
+                ['size', 'first', 'last'].indexOf(part) >= 0;
+
+              if (isArrayAccess || isObjectAccess) {
+                // If object is a hash- or array-like object we look for the
+                // presence of the key and if its available we return it
+                return Promise
+                  .resolve(this.lookupAndEvaluate(object, part))
+                  .then(this.liquify.bind(this));
+              } else if (isSpecialAccess) {
+                // Some special cases. If the part wasn't in square brackets
+                // and no key with the same name was found we interpret
+                // following calls as commands and call them on the
+                // current object
+                switch (part) {
+                  case 'size':
+                    return this.liquify(object.length);
+                  case 'first':
+                    return this.liquify(object[0]);
+                  case 'last':
+                    return this.liquify(object[object.length - 1]);
+                  default:
+                    /* @covignore */
+                    throw new Error(`Unknown special accessor: ${part}`);
+                }
+              }
+            });
+          });
       };
 
       // The iterator walks through the parsed path step
       // by step and waits for promises to be fulfilled.
       var iterator = function(object, index) {
         if (index < parts.length) {
-          return mapper(parts[index], object).then(object => iterator(object, index + 1));
+          return mapper(parts[index], object).then(object =>
+            iterator(object, index + 1));
         } else {
           return Promise.resolve(object);
         }
@@ -289,8 +344,7 @@ export default class Context {
       return iterator(object, 0).catch(function(err) {
         throw new Error(`Couldn't walk variable: ${markup}: ${err}`);
       });
-    }
-    );
+    });
   }
 
   lookupAndEvaluate(obj, key) {
@@ -310,39 +364,44 @@ export default class Context {
           lastScope[key] = this.lookupAndEvaluate(env, key);
           return true;
         }
-      }
-      );
-    }
-    );
+      });
+    });
   }
 
   liquify(object) {
     return Promise.resolve(object).then(object => {
       if (object == null) {
         return object;
-      } else if (typeof object.toLiquid === "function") {
+      } else if (typeof object.toLiquid === 'function') {
         object = object.toLiquid();
-      } else if (typeof object === "object") {
+      } else if (typeof object === 'object') {
         true; // throw new Error "Complex object #{JSON.stringify(object)} would leak into template."
-      } else if (typeof object === "function") {
-        object = "";
+      } else if (typeof object === 'function') {
+        object = '';
       } else {
         Object.prototype.toString.call(object);
       }
 
-      if (object instanceof Liquid.Drop) { object.context = this; }
+      if (object instanceof Liquid.Drop) {
+        object.context = this;
+      }
       return object;
-    }
-    );
+    });
   }
-};
+}
 Context.initClass();
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+  return typeof value !== 'undefined' && value !== null
+    ? transform(value)
+    : undefined;
 }
 function __guardMethod__(obj, methodName, transform) {
-  if (typeof obj !== 'undefined' && obj !== null && typeof obj[methodName] === 'function') {
+  if (
+    typeof obj !== 'undefined' &&
+      obj !== null &&
+      typeof obj[methodName] === 'function'
+  ) {
     return transform(obj, methodName);
   } else {
     return undefined;

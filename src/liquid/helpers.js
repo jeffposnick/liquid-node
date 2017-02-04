@@ -2,26 +2,24 @@ export default {
   flatten(array) {
     let output = [];
 
-    var _flatten = array =>
-      array.forEach(function(item) {
-        if (Array.isArray(item)) {
-          return _flatten(item);
-        } else {
-          return output.push(item);
-        }
-      })
-    ;
+    var _flatten = array => array.forEach(function(item) {
+      if (Array.isArray(item)) {
+        return _flatten(item);
+      } else {
+        return output.push(item);
+      }
+    });
 
     _flatten(array);
     return output;
   },
-
   toFlatString(array) {
-    return this.flatten(array).join("");
+    return this.flatten(array).join('');
   },
-
   scan(string, regexp, globalMatch) {
-    if (globalMatch == null) { globalMatch = false; }
+    if (globalMatch == null) {
+      globalMatch = false;
+    }
     let result = [];
 
     var _scan = function(s) {
@@ -35,9 +33,11 @@ export default {
         }
 
         let l = match[0].length;
-        if (globalMatch) { l = 1; }
+        if (globalMatch) {
+          l = 1;
+        }
 
-        if ((match.index + l) < s.length) {
+        if (match.index + l < s.length) {
           return _scan(s.substring(match.index + l));
         }
       }

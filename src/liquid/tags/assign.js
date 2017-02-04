@@ -1,16 +1,18 @@
 let SyntaxHelp;
-import Liquid from "../../liquid";
+import Liquid from '../../liquid';
 
-export default SyntaxHelp = undefined;
+export default (SyntaxHelp = undefined);
 let Syntax = undefined;
 class Assign extends Liquid.Tag {
   static initClass() {
     SyntaxHelp = "Syntax Error in 'assign' - Valid syntax: assign [var] = [source]";
-    Syntax = new RegExp(`\
+    Syntax = new RegExp(
+      `\
 ((?:${Liquid.VariableSignature.source})+)\
 \\s*=\\s*\
 (.*)\\s*\
-`);
+`
+    );
   }
 
   constructor(template, tagName, markup) {
@@ -23,8 +25,6 @@ class Assign extends Liquid.Tag {
       throw new Liquid.SyntaxError(SyntaxHelp);
     }
   }
-
-
 
   render(context) {
     context.lastScope()[this.to] = this.from.render(context);

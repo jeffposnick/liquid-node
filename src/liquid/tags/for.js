@@ -1,8 +1,8 @@
 let SyntaxHelp;
-import Liquid from "../../liquid";
+import Liquid from '../../liquid';
 
-import PromiseReduce from "../../promise_reduce";
-import Iterable from "../iterable";
+import PromiseReduce from '../../promise_reduce';
+import Iterable from '../iterable';
 
 // "For" iterates over an array or collection.
 // Several useful variables are available to you within the loop.
@@ -47,16 +47,18 @@ import Iterable from "../iterable";
 // forloop.first:: Returns true if the item is the first item.
 // forloop.last:: Returns true if the item is the last item.
 //
-export default SyntaxHelp = undefined;
+export default (SyntaxHelp = undefined);
 let Syntax = undefined;
 class For extends Liquid.Block {
   static initClass() {
     SyntaxHelp = "Syntax Error in 'for loop' - Valid syntax: for [item] in [collection]";
-    Syntax = new RegExp(`\
+    Syntax = new RegExp(
+      `\
 (\\w+)\\s+in\\s+\
 ((?:${Liquid.QuotedFragment.source})+)\
 \\s*(reversed)?\
-`);
+`
+    );
   }
 
   constructor(template, tagName, markup) {
@@ -80,86 +82,99 @@ class For extends Liquid.Block {
     this.nodelist = this.forBlock = [];
   }
 
-
   unknownTag(tag, markup) {
-    if (tag !== "else") { return super.unknownTag(...arguments); }
+    if (tag !== 'else') {
+      return super.unknownTag(...arguments);
+    }
     return this.nodelist = this.elseBlock = [];
   }
 
   render(context) {
-    if (!context.registers.for) { context.registers.for = {}; }
-
-    return Promise.resolve(context.get(this.collectionName)).then(collection => {
-      if (__guard__(collection, x => x.forEach)) {
-        // pass
-      } else if (collection instanceof Object) {
-        collection = ((() => {
-          let result = [];
-          for (let k of Object.keys(collection || {})) {
-            let v = collection[k];
-            result.push([k, v]);
-          }
-          return result;
-        })());
-      } else {
-        return this.renderElse(context);
-      }
-
-      let from = this.attributes.offset === "continue" ?
-        Number(context.registers["for"][this.registerName]) || 0
-      :
-        Number(this.attributes.offset) || 0;
-
-      let { limit } = this.attributes;
-      let to    = limit ? Number(limit) + from : null;
-
-      return this.sliceCollection(collection, from, to).then(segment => {
-        if (segment.length === 0) { return this.renderElse(context); }
-
-        if (this.reversed) { segment.reverse(); }
-
-        let { length } = segment;
-
-        // Store our progress through the collection for the continue flag
-        context.registers["for"][this.registerName] = from + segment.length;
-
-        return context.stack(() => {
-          return PromiseReduce(segment, (output, item, index) => {
-            context.set(this.variableName, item);
-            context.set("forloop", {
-              name    : this.registerName,
-              length,
-              index   : index + 1,
-              index0  : index,
-              rindex  : length - index,
-              rindex0 : length - index - 1,
-              first   : index === 0,
-              last    : index === (length - 1)
-            }
-            );
-
-            return Promise.resolve()
-              .then(() => {
-                return this.renderAll(this.forBlock, context);
-              }).then(function(rendered) {
-                output.push(rendered);
-                return output;}).catch(function(e) {
-                output.push(context.handleError(e));
-                return output;
-            });
-          }
-          , []);
-        }
-        );
-      }
-      );
+    if (!context.registers.for) {
+      context.registers.for = {};
     }
-    );
+
+    return Promise
+      .resolve(context.get(this.collectionName))
+      .then(collection => {
+        if (__guard__(collection, x => x.forEach)) {
+          // pass
+        } else if (collection instanceof Object) {
+          collection = (() => {
+            let result = [];
+            for (let k of Object.keys(collection || {})) {
+              let v = collection[k];
+              result.push([k, v]);
+            }
+            return result;
+          })();
+        } else {
+          return this.renderElse(context);
+        }
+
+        let from = this.attributes.offset === 'continue'
+          ? Number(context.registers['for'][this.registerName]) || 0
+          : Number(this.attributes.offset) || 0;
+
+        let { limit } = this.attributes;
+        let to = limit ? Number(limit) + from : null;
+
+        return this.sliceCollection(collection, from, to).then(segment => {
+          if (segment.length === 0) {
+            return this.renderElse(context);
+          }
+
+          if (this.reversed) {
+            segment.reverse();
+          }
+
+          let { length } = segment;
+
+          // Store our progress through the collection for the continue flag
+          context.registers['for'][this.registerName] = from + segment.length;
+
+          return context.stack(() => {
+            return PromiseReduce(
+              segment,
+              (output, item, index) => {
+                context.set(this.variableName, item);
+                context.set('forloop', {
+                  name: this.registerName,
+                  length,
+                  index: index + 1,
+                  index0: index,
+                  rindex: length - index,
+                  rindex0: length - index - 1,
+                  first: index === 0,
+                  last: index === length - 1
+                });
+
+                return Promise
+                  .resolve()
+                  .then(() => {
+                    return this.renderAll(this.forBlock, context);
+                  })
+                  .then(function(rendered) {
+                    output.push(rendered);
+                    return output;
+                  })
+                  .catch(function(e) {
+                    output.push(context.handleError(e));
+                    return output;
+                  });
+              },
+              []
+            );
+          });
+        });
+      });
   }
 
   sliceCollection(collection, from, to) {
     let args = [from];
-    if (to != null) { args.push(to); }
+    if (to != null) {
+      args.push(to);
+    }
     return Iterable.cast(collection).slice(...args);
   }
 
@@ -167,12 +182,14 @@ class For extends Liquid.Block {
     if (this.elseBlock) {
       return this.renderAll(this.elseBlock, context);
     } else {
-      return "";
+      return '';
     }
   }
 }
 For.initClass();
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+  return typeof value !== 'undefined' && value !== null
+    ? transform(value)
+    : undefined;
 }

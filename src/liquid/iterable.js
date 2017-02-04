@@ -1,7 +1,7 @@
-import Range from "./range";
+import Range from './range';
 
-
-let isString = input => Object.prototype.toString.call(input) === "[object String]";
+let isString = input =>
+  Object.prototype.toString.call(input) === '[object String]';
 
 export default class Iterable {
   first() {
@@ -43,7 +43,7 @@ export default class Iterable {
       return new IterableForArray([]);
     }
   }
-};
+}
 
 class IterableForArray extends Iterable {
   constructor(array) {

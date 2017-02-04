@@ -1,5 +1,4 @@
-import Liquid from "../../liquid";
-
+import Liquid from '../../liquid';
 
 export default class IfChanged extends Liquid.Block {
   render(context) {
@@ -12,10 +11,9 @@ export default class IfChanged extends Liquid.Block {
         if (output !== context.registers.ifchanged) {
           return context.registers.ifchanged = output;
         } else {
-          return "";
+          return '';
         }
       });
-    }
-    );
+    });
   }
-};
+}

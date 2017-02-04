@@ -1,8 +1,6 @@
-import Liquid from "../liquid";
+import Liquid from '../liquid';
 
-
-export default Liquid.Template = class Template {
-
+export default (Liquid.Template = class Template {
   // creates a new <tt>Template</tt> from an array of tokens.
   // Use <tt>Template.parse</tt> instead
   constructor() {
@@ -18,15 +16,16 @@ export default Liquid.Template = class Template {
   // Returns self for easy chaining
   parse(engine, source) {
     this.engine = engine;
-    if (source == null) { source = ""; }
+    if (source == null) {
+      source = '';
+    }
     return Promise.resolve().then(() => {
       let tokens = this._tokenize(source);
 
       this.tags = this.engine.tags;
       this.root = new Liquid.Document(this);
       return this.root.parseWithCallbacks(tokens).then(() => this);
-    }
-    );
+    });
   }
 
   // Render takes a hash with local variables.
@@ -47,19 +46,35 @@ export default Liquid.Template = class Template {
   }
 
   _render(assigns, options) {
-    if (this.root == null) { throw new Error("No document root. Did you parse the document yet?"); }
+    if (this.root == null) {
+      throw new Error('No document root. Did you parse the document yet?');
+    }
 
     let context = (() => {
       if (assigns instanceof Liquid.Context) {
-      return assigns;
-    } else if (assigns instanceof Object) {
-      assigns = [assigns, this.assigns];
-      return new Liquid.Context(this.engine, assigns, this.instanceAssigns, this.registers, this.rethrowErrors);
-    } else if (assigns == null) {
-      return new Liquid.Context(this.engine, this.assigns, this.instanceAssigns, this.registers, this.rethrowErrors);
-    } else {
-      throw new Error(`Expected Object or Liquid::Context as parameter, but was ${typeof assigns}.`);
-    }
+        return assigns;
+      } else if (assigns instanceof Object) {
+        assigns = [assigns, this.assigns];
+        return new Liquid.Context(
+          this.engine,
+          assigns,
+          this.instanceAssigns,
+          this.registers,
+          this.rethrowErrors
+        );
+      } else if (assigns == null) {
+        return new Liquid.Context(
+          this.engine,
+          this.assigns,
+          this.instanceAssigns,
+          this.registers,
+          this.rethrowErrors
+        );
+      } else {
+        throw new Error(
+          `Expected Object or Liquid::Context as parameter, but was ${typeof assigns}.`
+        );
+      }
     })();
 
     if (__guard__(options, x => x.registers)) {
@@ -78,46 +93,55 @@ export default Liquid.Template = class Template {
       return actualResult;
     };
 
-    return this.root.render(context)
-    .then(chunks => Liquid.Helpers.toFlatString(chunks)).then(function(result) {
-      this.errors = context.errors;
-      return result;
-    }
-    , function(error) {
-      this.errors = context.errors;
-      throw error;
-    });
+    return this.root
+      .render(context)
+      .then(chunks => Liquid.Helpers.toFlatString(chunks))
+      .then(
+        function(result) {
+          this.errors = context.errors;
+          return result;
+        },
+        function(error) {
+          this.errors = context.errors;
+          throw error;
+        }
+      );
   }
 
   // Uses the <tt>Liquid::TemplateParser</tt> regexp to tokenize
   // the passed source
   _tokenize(source) {
     source = String(source);
-    if (source.length === 0) { return []; }
+    if (source.length === 0) {
+      return [];
+    }
     let tokens = source.split(Liquid.TemplateParser);
 
     let line = 1;
     let col = 1;
 
     return tokens
-    .filter(token => token.length > 0).map(function(value) {
-      let result = { value, col, line };
+      .filter(token => token.length > 0)
+      .map(function(value) {
+        let result = { value, col, line };
 
-      let lastIndex = value.lastIndexOf("\n");
+        let lastIndex = value.lastIndexOf('\n');
 
-      if (lastIndex < 0) {
-        col += value.length;
-      } else {
-        let linebreaks = value.split("\n").length - 1;
-        line += linebreaks;
-        col = value.length - lastIndex;
-      }
+        if (lastIndex < 0) {
+          col += value.length;
+        } else {
+          let linebreaks = value.split('\n').length - 1;
+          line += linebreaks;
+          col = value.length - lastIndex;
+        }
 
-      return result;
-    });
+        return result;
+      });
   }
-};
+});
 
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+  return typeof value !== 'undefined' && value !== null
+    ? transform(value)
+    : undefined;
 }

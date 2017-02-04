@@ -1,5 +1,3 @@
-
-
 export default class Tag {
   constructor(template, tagName, markup) {
     this.template = template;
@@ -22,13 +20,14 @@ export default class Tag {
     }
   }
 
-  parse() {}
+  parse() {
+  }
 
   name() {
     return this.constructor.name.toLowerCase();
   }
 
   render() {
-    return "";
+    return '';
   }
-};
+}
