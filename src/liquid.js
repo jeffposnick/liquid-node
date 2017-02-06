@@ -44,3 +44,15 @@ export default class Liquid {
   }
 }
 Liquid.initClass();
+Liquid.Error = Error;
+
+// Errors
+[
+  'ArgumentError',
+  'ContextError',
+  'FilterNotFound',
+  'FileSystemError',
+  'StandardError',
+  'StackLevelError',
+  'SyntaxError'
+].forEach(className => Liquid[className] = Liquid.Error);

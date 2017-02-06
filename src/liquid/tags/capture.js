@@ -1,5 +1,5 @@
-let Syntax;
 import Liquid from '../../liquid';
+import Block from '../block';
 
 // Capture stores the result of a block into a variable without rendering it inplace.
 //
@@ -12,9 +12,9 @@ import Liquid from '../../liquid';
 // Capture is useful for saving content for use later in your template, such as
 // in a sidebar or footer.
 //
-export default (Syntax = undefined);
+let Syntax = undefined;
 let SyntaxHelp = undefined;
-class Capture extends Liquid.Block {
+export default class Capture extends Block {
   static initClass() {
     Syntax = /(\w+)/;
     SyntaxHelp = "Syntax Error in 'capture' - Valid syntax: capture [var]";

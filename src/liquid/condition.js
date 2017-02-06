@@ -1,5 +1,4 @@
-let LITERALS;
-import Liquid from '../liquid';
+import Context from './context';
 
 // Container for liquid nodes which conveniently wraps decision making logic
 //
@@ -8,8 +7,8 @@ import Liquid from '../liquid';
 //   c = Condition.new('1', '==', '1')
 //   c.evaluate #=> true
 //
-export default (LITERALS = undefined);
-class Condition {
+let LITERALS = undefined;
+export default class Condition {
   static initClass() {
     this.operators = {
       ['=='](cond, left, right) {
@@ -64,7 +63,7 @@ class Condition {
 
   evaluate(context) {
     if (context == null) {
-      context = new Liquid.Context();
+      context = new Context();
     }
 
     let result = this.interpretCondition(

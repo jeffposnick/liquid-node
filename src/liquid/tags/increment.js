@@ -1,4 +1,4 @@
-import Liquid from '../../liquid';
+import Tag from '../tag';
 
 // increment is used in a place where one needs to insert a counter
 //     into a template, and needs the counter to survive across
@@ -16,7 +16,7 @@ import Liquid from '../../liquid';
 //    Hello: 2
 //
 
-export default class Increment extends Liquid.Tag {
+export default class Increment extends Tag {
   constructor(template, tagName, markup) {
     super(...arguments);
     this.variable = markup.trim();

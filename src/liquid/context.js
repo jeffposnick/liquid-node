@@ -1,4 +1,7 @@
+import Drop from './drop';
+import helpers from './helpers';
 import Liquid from '../liquid';
+import Range from './range';
 
 export default class Context {
   static initClass() {
@@ -27,7 +30,7 @@ export default class Context {
     if (rethrowErrors == null) {
       rethrowErrors = false;
     }
-    this.environments = Liquid.Helpers.flatten([environments]);
+    this.environments = helpers.flatten([environments]);
     this.scopes = [outerScope];
     this.registers = registers;
     this.errors = [];
@@ -181,8 +184,8 @@ export default class Context {
   //   products == empty #=> products.empty?
   resolve(key) {
     let match;
-    if (Liquid.Context.Literals.hasOwnProperty(key)) {
-      return Liquid.Context.Literals[key];
+    if (Context.Literals.hasOwnProperty(key)) {
+      return Context.Literals[key];
     } else if (
       match = /^'(.*)'$/.exec(key) // Single quoted strings
     ) {
@@ -208,7 +211,7 @@ export default class Context {
         if (isNaN(lo) || isNaN(hi)) {
           return [];
         }
-        return new Liquid.Range(lo, hi + 1);
+        return new Range(lo, hi + 1);
       });
     } else if (
       match = /^(\d[\d\.]+)$/.exec(key) // Floats
@@ -259,7 +262,7 @@ export default class Context {
   variable(markup) {
     return Promise.resolve().then(() => {
       let match;
-      let parts = Liquid.Helpers.scan(markup, Liquid.VariableParser);
+      let parts = helpers.scan(markup, Liquid.VariableParser);
       let squareBracketed = /^\[(.*)\]$/;
 
       let firstPart = parts.shift();
@@ -348,7 +351,7 @@ export default class Context {
   }
 
   lookupAndEvaluate(obj, key) {
-    if (obj instanceof Liquid.Drop) {
+    if (obj instanceof Drop) {
       return obj.get(key);
     } else {
       return __guard__(obj, x => x[key]);
@@ -382,7 +385,7 @@ export default class Context {
         Object.prototype.toString.call(object);
       }
 
-      if (object instanceof Liquid.Drop) {
+      if (object instanceof Drop) {
         object.context = this;
       }
       return object;

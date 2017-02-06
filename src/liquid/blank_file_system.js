@@ -1,6 +1,6 @@
 import Liquid from '../liquid';
 
-export default (Liquid.BlankFileSystem = class BlankFileSystem {
+export default class BlankFileSystem {
   constructor() {
   }
 
@@ -9,4 +9,4 @@ export default (Liquid.BlankFileSystem = class BlankFileSystem {
       "This file system doesn't allow includes"
     ));
   }
-});
+};

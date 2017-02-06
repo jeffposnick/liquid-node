@@ -1,45 +1,42 @@
-import Liquid from '../liquid';
+import Assign from './tags/assign';
+import BlankFileSystem from './blank_file_system';
+import Capture from './tags/capture';
+import Case from './tags/case';
+import Comment from './tags/comment';
+import Decrement from './tags/decrement';
+import For from './tags/for';
+import If from './tags/if';
+import IfChanged from './tags/ifchanged';
+import Include from './tags/include';
+import Increment from './tags/increment';
+import Raw from './tags/raw';
+import StandardFilters from './standard_filters';
+import Template from './template';
+import Unless from './tags/unless';
 
-export default (Liquid.Engine = class Engine {
+export default class Engine {
   constructor() {
-    this.tags = {};
+    this.tags = {
+      assign: Assign,
+      capture: Capture,
+      case: Case,
+      comment: Comment,
+      decrement: Decrement,
+      for: For,
+      if: If,
+      ifchanged: IfChanged,
+      include: Include,
+      increment: Increment,
+      raw: Raw,
+      unless: Unless
+    };
+
     this.Strainer = function(context) {
       this.context = context;
     };
-    this.registerFilters(Liquid.StandardFilters);
+    this.registerFilters(StandardFilters);
 
-    this.fileSystem = new Liquid.BlankFileSystem();
-
-    var isSubclassOf = function(klass, ofKlass) {
-      if (typeof klass !== 'function') {
-        return false;
-      } else if (klass === ofKlass) {
-        return true;
-      } else {
-        return isSubclassOf(
-          __guard__(klass.__super__, x => x.constructor),
-          ofKlass
-        );
-      }
-    };
-
-    for (let tagName of Object.keys(Liquid || {})) {
-      let tag = Liquid[tagName];
-      if (!isSubclassOf(tag, Liquid.Tag)) {
-        continue;
-      }
-      let isBlockOrTagBaseClass = [Liquid.Tag, Liquid.Block].indexOf(
-        tag.constructor
-      ) >=
-        0;
-      if (!isBlockOrTagBaseClass) {
-        this.registerTag(tagName.toLowerCase(), tag);
-      }
-    }
-  }
-
-  registerTag(name, tag) {
-    return this.tags[name] = tag;
+    this.fileSystem = new BlankFileSystem();
   }
 
   registerFilters(...filters) {
@@ -60,7 +57,7 @@ export default (Liquid.Engine = class Engine {
   }
 
   parse(source) {
-    let template = new Liquid.Template();
+    let template = new Template();
     return template.parse(this, source);
   }
 
@@ -69,15 +66,9 @@ export default (Liquid.Engine = class Engine {
   }
 
   registerFileSystem(fileSystem) {
-    if (!(fileSystem instanceof Liquid.BlankFileSystem)) {
-      throw Liquid.ArgumentError('Must be subclass of Liquid.BlankFileSystem');
+    if (!(fileSystem instanceof BlankFileSystem)) {
+      throw Liquid.ArgumentError('Must be subclass of BlankFileSystem');
     }
     return this.fileSystem = fileSystem;
   }
-});
-
-function __guard__(value, transform) {
-  return typeof value !== 'undefined' && value !== null
-    ? transform(value)
-    : undefined;
-}
+};

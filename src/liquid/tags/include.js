@@ -1,9 +1,10 @@
-let Syntax;
 import Liquid from '../../liquid';
+import Tag from '../tag';
 
-export default (Syntax = undefined);
+let Syntax = undefined;
 let SyntaxHelp = undefined;
-class Include extends Liquid.Tag {
+
+export default class Include extends Tag {
   static initClass() {
     Syntax = /([a-z0-9\/\\_-]+)/i;
     SyntaxHelp = `Syntax Error in 'include' - \

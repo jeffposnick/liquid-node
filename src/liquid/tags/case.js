@@ -1,12 +1,15 @@
-let SyntaxHelp;
+import Block from '../block';
+import Condition from '../condition';
+import ElseCondition from '../else_condition';
+import helpers from '../helpers';
 import Liquid from '../../liquid';
-
 import PromiseReduce from '../../promise_reduce';
 
-export default (SyntaxHelp = undefined);
+let SyntaxHelp = undefined;
 let Syntax = undefined;
 let WhenSyntax = undefined;
-class Case extends Liquid.Block {
+
+export default class Case extends Block {
   static initClass() {
     SyntaxHelp = "Syntax Error in tag 'case' - Valid syntax: case [expression]";
 
@@ -76,11 +79,11 @@ class Case extends Liquid.Block {
   pushBlock(tag, markup) {
     let block;
     if (tag === 'else') {
-      block = new Liquid.ElseCondition();
+      block = new ElseCondition();
       this.blocks.push(block);
       return this.nodelist = block.attach([]);
     } else {
-      let expressions = Liquid.Helpers.scan(markup, WhenSyntax);
+      let expressions = helpers.scan(markup, WhenSyntax);
 
       let nodelist = [];
 
@@ -89,7 +92,7 @@ class Case extends Liquid.Block {
         for (let value of Array.from(expressions[0])) {
           let item;
           if (value) {
-            block = new Liquid.Condition(this.markup, '==', value);
+            block = new Condition(this.markup, '==', value);
             this.blocks.push(block);
             item = this.nodelist = block.attach(nodelist);
           }

@@ -1,6 +1,6 @@
-import Liquid from '../../liquid';
+import Block from '../block';
 
-export default class Raw extends Liquid.Block {
+export default class Raw extends Block {
   parse(tokens) {
     return Promise.resolve().then(() => {
       if (tokens.length === 0 || this.ended) {
@@ -8,7 +8,7 @@ export default class Raw extends Liquid.Block {
       }
 
       let token = tokens.shift();
-      let match = Liquid.Block.FullToken.exec(token.value);
+      let match = Block.FullToken.exec(token.value);
 
       if (__guard__(match, x => x[1]) === this.blockDelimiter()) {
         return this.endTag();

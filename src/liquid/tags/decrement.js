@@ -1,4 +1,4 @@
-import Liquid from '../../liquid';
+import Tag from '../tag';
 
 // decrement is used in a place where one needs to insert a counter
 //     into a template, and needs the counter to survive across
@@ -18,7 +18,7 @@ import Liquid from '../../liquid';
 //    Hello: -2
 //    Hello: -3
 //
-export default class Decrement extends Liquid.Tag {
+export default class Decrement extends Tag {
   constructor(template, tagName, markup) {
     super(...arguments);
     this.variable = markup.trim();

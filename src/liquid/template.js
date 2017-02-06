@@ -1,6 +1,9 @@
+import Context from './context';
+import helpers from './helpers';
 import Liquid from '../liquid';
+import Document from './document';
 
-export default (Liquid.Template = class Template {
+export default class Template {
   // creates a new <tt>Template</tt> from an array of tokens.
   // Use <tt>Template.parse</tt> instead
   constructor() {
@@ -23,7 +26,7 @@ export default (Liquid.Template = class Template {
       let tokens = this._tokenize(source);
 
       this.tags = this.engine.tags;
-      this.root = new Liquid.Document(this);
+      this.root = new Document(this);
       return this.root.parseWithCallbacks(tokens).then(() => this);
     });
   }
@@ -51,11 +54,11 @@ export default (Liquid.Template = class Template {
     }
 
     let context = (() => {
-      if (assigns instanceof Liquid.Context) {
+      if (assigns instanceof Context) {
         return assigns;
       } else if (assigns instanceof Object) {
         assigns = [assigns, this.assigns];
-        return new Liquid.Context(
+        return new Context(
           this.engine,
           assigns,
           this.instanceAssigns,
@@ -63,7 +66,7 @@ export default (Liquid.Template = class Template {
           this.rethrowErrors
         );
       } else if (assigns == null) {
-        return new Liquid.Context(
+        return new Context(
           this.engine,
           this.assigns,
           this.instanceAssigns,
@@ -72,7 +75,7 @@ export default (Liquid.Template = class Template {
         );
       } else {
         throw new Error(
-          `Expected Object or Liquid::Context as parameter, but was ${typeof assigns}.`
+          `Expected Object or Context as parameter, but was ${typeof assigns}.`
         );
       }
     })();
@@ -95,20 +98,19 @@ export default (Liquid.Template = class Template {
 
     return this.root
       .render(context)
-      .then(chunks => Liquid.Helpers.toFlatString(chunks))
-      .then(
-        function(result) {
+      .then(chunks => helpers.toFlatString(chunks))
+      .then(result => {
           this.errors = context.errors;
           return result;
         },
-        function(error) {
+        error => {
           this.errors = context.errors;
           throw error;
         }
       );
   }
 
-  // Uses the <tt>Liquid::TemplateParser</tt> regexp to tokenize
+  // Uses the <tt>Liquid.TemplateParser</tt> regexp to tokenize
   // the passed source
   _tokenize(source) {
     source = String(source);
@@ -138,7 +140,7 @@ export default (Liquid.Template = class Template {
         return result;
       });
   }
-});
+};
 
 function __guard__(value, transform) {
   return typeof value !== 'undefined' && value !== null

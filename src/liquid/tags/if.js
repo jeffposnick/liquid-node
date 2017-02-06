@@ -1,12 +1,15 @@
-let SyntaxHelp;
+import Block from '../block';
+import Condition from '../condition';
+import ElseCondition from '../else_condition';
+import helpers from '../helpers';
 import Liquid from '../../liquid';
-
 import PromiseReduce from '../../promise_reduce';
 
-export default (SyntaxHelp = undefined);
+let SyntaxHelp = undefined;
 let Syntax = undefined;
 let ExpressionsAndOperators = undefined;
-class If extends Liquid.Block {
+
+export default class If extends Block {
   static initClass() {
     SyntaxHelp = "Syntax Error in tag 'if' - Valid syntax: if [expression]";
 
@@ -82,9 +85,9 @@ class If extends Liquid.Block {
   pushBlock(tag, markup) {
     let block = (() => {
       if (tag === 'else') {
-        return new Liquid.ElseCondition();
+        return new ElseCondition();
       } else {
-        let expressions = Liquid.Helpers.scan(markup, ExpressionsAndOperators);
+        let expressions = helpers.scan(markup, ExpressionsAndOperators);
         expressions = expressions.reverse();
         let match = Syntax.exec(expressions.shift());
 
@@ -92,7 +95,7 @@ class If extends Liquid.Block {
           throw new Liquid.SyntaxError(SyntaxHelp);
         }
 
-        let condition = new Liquid.Condition(...match.slice(1, 4));
+        let condition = new Condition(...match.slice(1, 4));
 
         while (expressions.length > 0) {
           let operator = String(expressions.shift()).trim();
@@ -102,7 +105,7 @@ class If extends Liquid.Block {
             throw new SyntaxError(SyntaxHelp);
           }
 
-          let newCondition = new Liquid.Condition(...match.slice(1, 4));
+          let newCondition = new Condition(...match.slice(1, 4));
           newCondition[operator].call(newCondition, condition);
           condition = newCondition;
         }

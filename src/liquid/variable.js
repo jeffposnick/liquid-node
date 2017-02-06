@@ -1,7 +1,7 @@
-let VariableNameFragment;
 import Liquid from '../liquid';
-
 import PromiseReduce from '../promise_reduce';
+import helpers from './helpers';
+import Drop from './drop';
 
 // Holds variables. Variables are only loaded "just in time"
 // and are not evaluated as part of the render stage
@@ -13,10 +13,11 @@ import PromiseReduce from '../promise_reduce';
 //
 //   {{ user | link }}
 //
-export default (VariableNameFragment = undefined);
+let VariableNameFragment = undefined;
 let FilterListFragment = undefined;
 let FilterArgParser = undefined;
-class Variable {
+
+export default class Variable {
   static initClass() {
     this.FilterParser = new RegExp(
       `(?:${Liquid.FilterSeparator.source}|(?:\\s*(?!(?:${Liquid.FilterSeparator.source}))(?:${Liquid.QuotedFragment.source}|\\S+)\\s*)+)`
@@ -47,15 +48,15 @@ class Variable {
       return;
     }
 
-    let filters = Liquid.Helpers.scan(match[1], Liquid.Variable.FilterParser);
+    let filters = helpers.scan(match[1], Variable.FilterParser);
     filters.forEach(filter => {
       match = /\s*(\w+)/.exec(filter);
       if (!match) {
         return;
       }
       let filterName = match[1];
-      let filterArgs = Liquid.Helpers.scan(filter, FilterArgParser);
-      filterArgs = Liquid.Helpers.flatten(filterArgs);
+      let filterArgs = helpers.scan(filter, FilterArgParser);
+      filterArgs = helpers.flatten(filterArgs);
       return this.filters.push([filterName, filterArgs]);
     });
   }
@@ -103,7 +104,7 @@ class Variable {
 
     return filtered
       .then(function(f) {
-        if (!(f instanceof Liquid.Drop)) {
+        if (!(f instanceof Drop)) {
           return f;
         }
         f.context = context;

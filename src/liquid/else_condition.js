@@ -1,6 +1,6 @@
-import Liquid from '../liquid';
+import Condition from './condition';
 
-export default class ElseCondition extends Liquid.Condition {
+export default class ElseCondition extends Condition {
   evaluate() {
     return true;
   }

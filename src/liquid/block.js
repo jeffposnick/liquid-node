@@ -1,5 +1,6 @@
 import Liquid from '../liquid';
-import util from 'util';
+import Tag from './tag';
+import Variable from './variable';
 
 // Iterates over promises sequentially
 let Promise_each = function(promises, cb) {
@@ -18,7 +19,7 @@ let Promise_each = function(promises, cb) {
   return iterator(0);
 };
 
-export default class Block extends Liquid.Tag {
+export default class Block extends Tag {
   static initClass() {
     this.IsTag = new RegExp(`^${Liquid.TagStart.source}`);
     this.IsVariable = new RegExp(`^${Liquid.VariableStart.source}`);
@@ -130,11 +131,11 @@ export default class Block extends Liquid.Tag {
 
   createVariable(token) {
     let match = __guard__(
-      Liquid.Block.ContentOfVariable.exec(token.value),
+      Block.ContentOfVariable.exec(token.value),
       x => x[1]
     );
     if (match) {
-      return new Liquid.Variable(match);
+      return new Variable(match);
     }
     throw new Liquid.SyntaxError(
       `Variable '${token.value}' was not properly terminated with regexp: ${Liquid.VariableEnd.inspect}`

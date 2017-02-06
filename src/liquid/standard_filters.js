@@ -1,7 +1,7 @@
 import strftime from 'strftime';
 
 import Iterable from './iterable';
-import { flatten } from './helpers';
+import helpers from './helpers';
 
 let toNumber = input => Number(input);
 
@@ -242,7 +242,7 @@ export default {
   //# TODO!!!
 
   flatten(input) {
-    return toIterable(input).toArray().then(a => flatten(a));
+    return toIterable(input).toArray().then(a => helpers.flatten(a));
   },
   join(input, glue) {
     if (glue == null) {

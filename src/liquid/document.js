@@ -1,6 +1,6 @@
-import Liquid from '../liquid';
+import Block from './block';
 
-export default (Liquid.Document = class Document extends Liquid.Block {
+export default class Document extends Block {
   // we don't need markup to open this block
   constructor(template) {
     super(...arguments);
@@ -16,4 +16,4 @@ export default (Liquid.Document = class Document extends Liquid.Block {
   // not actually opened
   assertMissingDelimitation() {
   }
-});
+};

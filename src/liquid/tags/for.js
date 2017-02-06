@@ -1,8 +1,8 @@
-let SyntaxHelp;
 import Liquid from '../../liquid';
-
+import Block from '../block';
 import PromiseReduce from '../../promise_reduce';
 import Iterable from '../iterable';
+import helpers from '../helpers';
 
 // "For" iterates over an array or collection.
 // Several useful variables are available to you within the loop.
@@ -47,9 +47,11 @@ import Iterable from '../iterable';
 // forloop.first:: Returns true if the item is the first item.
 // forloop.last:: Returns true if the item is the last item.
 //
-export default (SyntaxHelp = undefined);
+
+let SyntaxHelp = undefined;
 let Syntax = undefined;
-class For extends Liquid.Block {
+
+export default class For extends Block {
   static initClass() {
     SyntaxHelp = "Syntax Error in 'for loop' - Valid syntax: for [item] in [collection]";
     Syntax = new RegExp(
@@ -72,7 +74,7 @@ class For extends Liquid.Block {
       this.reversed = match[3];
       this.attributes = {};
 
-      Liquid.Helpers.scan(markup, Liquid.TagAttributes).forEach(attr => {
+      helpers.scan(markup, Liquid.TagAttributes).forEach(attr => {
         return this.attributes[attr[0]] = attr[1];
       });
     } else {

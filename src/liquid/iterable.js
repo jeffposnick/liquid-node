@@ -45,7 +45,7 @@ export default class Iterable {
   }
 }
 
-class IterableForArray extends Iterable {
+export class IterableForArray extends Iterable {
   constructor(array) {
     super(...arguments);
     this.array = array;

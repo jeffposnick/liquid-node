@@ -1,9 +1,10 @@
-let SyntaxHelp;
 import Liquid from '../../liquid';
+import Tag from '../tag';
 
-export default (SyntaxHelp = undefined);
+let SyntaxHelp = undefined;
 let Syntax = undefined;
-class Assign extends Liquid.Tag {
+
+export default class Assign extends Tag {
   static initClass() {
     SyntaxHelp = "Syntax Error in 'assign' - Valid syntax: assign [var] = [source]";
     Syntax = new RegExp(
